@@ -1,4 +1,4 @@
-package io.blindet.file.storage.service;
+package com.onlym.file.storage.service;
 
 public class StorageException extends RuntimeException {
 

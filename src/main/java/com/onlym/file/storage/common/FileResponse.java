@@ -1,4 +1,4 @@
-package io.blindet.file.storage.common;
+package com.onlym.file.storage.common;
 
 public class FileResponse {
     private String name;

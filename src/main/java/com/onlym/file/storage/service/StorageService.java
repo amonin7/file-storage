@@ -1,4 +1,4 @@
-package io.blindet.file.storage.service;
+package com.onlym.file.storage.service;
 
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;

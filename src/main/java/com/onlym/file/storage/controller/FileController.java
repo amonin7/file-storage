@@ -1,7 +1,7 @@
-package io.blindet.file.storage.controller;
+package com.onlym.file.storage.controller;
 
-import io.blindet.file.storage.common.FileResponse;
-import io.blindet.file.storage.service.StorageService;
+import com.onlym.file.storage.common.FileResponse;
+import com.onlym.file.storage.service.StorageService;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;

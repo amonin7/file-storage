@@ -1,6 +1,6 @@
-package io.blindet.file.storage;
+package com.onlym.file.storage;
 
-import io.blindet.file.storage.properties.StorageProperties;
+import com.onlym.file.storage.properties.StorageProperties;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

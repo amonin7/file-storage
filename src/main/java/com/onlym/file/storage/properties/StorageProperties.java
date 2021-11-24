@@ -1,4 +1,4 @@
-package io.blindet.file.storage.properties;
+package com.onlym.file.storage.properties;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

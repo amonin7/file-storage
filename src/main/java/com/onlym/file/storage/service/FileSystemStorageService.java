@@ -1,6 +1,6 @@
-package io.blindet.file.storage.service;
+package com.onlym.file.storage.service;
 
-import io.blindet.file.storage.properties.StorageProperties;
+import com.onlym.file.storage.properties.StorageProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
