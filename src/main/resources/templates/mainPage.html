@@ -17,7 +17,7 @@
 <h2>Files in storage:</h2>
 <ul>
     <li th:each="file : ${files}">
-        <a th:href="${file}" target="_blank" th:text="${file}"></a>
+        <a th:href="${file.value}" target="_blank" th:text="${file.key}"></a>
     </li>
 </ul>
 

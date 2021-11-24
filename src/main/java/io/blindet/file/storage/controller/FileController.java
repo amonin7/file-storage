@@ -15,9 +15,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Controller
 public class FileController {
@@ -30,13 +33,16 @@ public class FileController {
 
     @GetMapping("/")
     public String listAllFiles(Model model) {
-
-        model.addAttribute("files", storageService.loadAllFilenamesInUploadDir().map(
-                        path -> ServletUriComponentsBuilder.fromCurrentContextPath()
+        Stream<Path> filenamesInUploadDir = storageService.loadAllFilenamesInUploadDir();
+        Map<Path, String> pathToDownloadUri = filenamesInUploadDir
+                .collect(Collectors.toMap(
+                        path -> path,
+                        path -> ServletUriComponentsBuilder
+                                .fromCurrentContextPath()
                                 .path("/download/")
                                 .path(path.getFileName().toString())
-                                .toUriString())
-                .collect(Collectors.toList()));
+                                .toUriString()));
+        model.addAttribute("files", pathToDownloadUri);
 
         return "mainPage";
     }
