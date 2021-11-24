@@ -63,12 +63,12 @@ public class FileController {
 
     private FileResponse uploadFile(MultipartFile file) {
         String name = storageService.store(file);
-        String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
+        String downloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(name)
                 .toUriString();
 
-        return new FileResponse(name, uri, file.getContentType(), file.getSize());
+        return new FileResponse(name, downloadUri, file.getContentType(), file.getSize());
     }
 
 }

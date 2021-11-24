@@ -2,13 +2,13 @@ package io.blindet.file.storage.common;
 
 public class FileResponse {
     private String name;
-    private String uri;
+    private String downloadUri;
     private String type;
     private long size;
 
-    public FileResponse(String name, String uri, String type, long size) {
+    public FileResponse(String name, String downloadUri, String type, long size) {
         this.name = name;
-        this.uri = uri;
+        this.downloadUri = downloadUri;
         this.type = type;
         this.size = size;
     }
@@ -17,8 +17,8 @@ public class FileResponse {
         return name;
     }
 
-    public String getUri() {
-        return uri;
+    public String getDownloadUri() {
+        return downloadUri;
     }
 
     public String getType() {
