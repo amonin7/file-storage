@@ -7,8 +7,8 @@
 <hr/>
 
 <h4>Upload files:</h4>
-<form method="POST" enctype="multipart/form-data" th:action="@{/upload}">
-    <input type="file" name="files"> <br/><br/>
+<form method="POST" enctype="multipart/form-data">
+    <input type="file" name="files" multiple> <br/><br/>
     <button type="submit">Upload</button>
 </form>
 
