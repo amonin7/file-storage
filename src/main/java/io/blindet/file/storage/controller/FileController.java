@@ -28,6 +28,19 @@ public class FileController {
         this.storageService = storageService;
     }
 
+    @GetMapping("/")
+    public String listAllFiles(Model model) {
+
+        model.addAttribute("files", storageService.loadAllFilenamesInUploadDir().map(
+                        path -> ServletUriComponentsBuilder.fromCurrentContextPath()
+                                .path("/download/")
+                                .path(path.getFileName().toString())
+                                .toUriString())
+                .collect(Collectors.toList()));
+
+        return "mainPage";
+    }
+
     @GetMapping("/download/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> downloadFile(@PathVariable String filename) {
@@ -40,7 +53,7 @@ public class FileController {
                 .body(resource);
     }
 
-    @PostMapping("/upload-many-files")
+    @PostMapping("/upload")
     @ResponseBody
     public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         return Arrays.stream(files)
@@ -48,11 +61,8 @@ public class FileController {
                 .collect(Collectors.toList());
     }
 
-    @PostMapping("/upload-one-file")
-    @ResponseBody
-    private FileResponse uploadFile(@RequestParam("file") MultipartFile file) {
+    private FileResponse uploadFile(MultipartFile file) {
         String name = storageService.store(file);
-
         String uri = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/download/")
                 .path(name)

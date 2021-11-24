@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<h1>Simple server file storage</h1>
+
+<hr/>
+
+<h4>Upload files:</h4>
+<form method="POST" enctype="multipart/form-data" th:action="@{/upload}">
+    <input type="file" name="files"> <br/><br/>
+    <button type="submit">Upload</button>
+</form>
+
+<hr/>
+
+<h2>Files in storage:</h2>
+<ul>
+    <li th:each="file : ${files}">
+        <a th:href="${file}" target="_blank" th:text="${file}"></a>
+    </li>
+</ul>
+
+</body>
+</html>
