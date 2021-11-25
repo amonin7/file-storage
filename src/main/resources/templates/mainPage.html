@@ -1,16 +1,32 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
+<!--<script src="http://code.jquery.com/jquery-plugins.js"></script>-->
+<script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <h1>Simple server file storage</h1>
 
 <hr/>
 
 <h4>Upload files:</h4>
-<form method="POST" enctype="multipart/form-data">
-    <input type="file" name="files" multiple> <br/><br/>
+<form id="uploadForm">
+    <input type="file" name="files"> <br/><br/>
     <button type="submit">Upload</button>
 </form>
+
+<script>
+    uploadForm.onsubmit = async (e) => {
+        e.preventDefault();
+        let oldFormData = new FormData(uploadForm);
+        let file = oldFormData.get("files");
+        let encryptedFile = await encryptFile(file);
+        oldFormData.set("files", encryptedFile, "test.jpeg")
+        await fetch('/', {
+            method: 'POST',
+            body: oldFormData
+        });
+    };
+</script>
 
 <hr/>
 
@@ -23,3 +39,88 @@
 
 </body>
 </html>
+
+<script type="text/javascript">
+    var objFile=null;
+    let passphrase = "SOME_CUSTOM_PASSPHRASE"
+
+    function addField() {
+        var data = new FormData(document.getElementById("uploadForm"));
+        data.append('username', 'tom');
+        data.forEach((value, key) => {
+            console.log(value);
+            console.log(key);
+        })
+        return data;
+    }
+
+    function readFile(file){
+        return new Promise((resolve, reject) => {
+            var fr = new FileReader();
+            fr.onload = () => {
+                resolve(fr.result)
+            };
+            fr.readAsArrayBuffer(file);
+        });
+    }
+
+    async function encryptFile(Files) {
+        objFile=Files;
+        // objFile=Files[0];
+
+        var plainTextBytes=await readFile(objFile)
+            .catch(function(err){
+                console.error(err);
+            });
+        plainTextBytes=new Uint8Array(plainTextBytes);
+
+        var pbkdf2iterations=10000;
+        var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
+        // var passphraseBytes=new TextEncoder("utf-8").encode(txtEncpassphrase.value);
+        var pbkdf2salt=window.crypto.getRandomValues(new Uint8Array(8));
+
+        var passphrasekey=await window.crypto.subtle.importKey('raw', passphraseBytes, {name: 'PBKDF2'}, false, ['deriveBits'])
+            .catch(function(err){
+                console.error(err);
+            });
+        console.log('passphrasekey imported');
+
+        var pbkdf2bytes=await window.crypto.subtle.deriveBits({"name": 'PBKDF2', "salt": pbkdf2salt, "iterations": pbkdf2iterations, "hash": 'SHA-256'}, passphrasekey, 384)
+            .catch(function(err){
+                console.error(err);
+            });
+        console.log('pbkdf2bytes derived');
+        pbkdf2bytes=new Uint8Array(pbkdf2bytes);
+
+        keybytes=pbkdf2bytes.slice(0,32);
+        ivbytes=pbkdf2bytes.slice(32);
+
+        var key=await window.crypto.subtle.importKey('raw', keybytes, {name: 'AES-CBC', length: 256}, false, ['encrypt'])
+            .catch(function(err){
+                console.error(err);
+            });
+        console.log('key imported');
+
+        var cipherbytes=await window.crypto.subtle.encrypt({name: "AES-CBC", iv: ivbytes}, key, plainTextBytes)
+            .catch(function(err){
+                console.error(err);
+            });
+
+        if(!cipherbytes) {
+            spnEncstatus.classList.add("redspan");
+            spnEncstatus.innerHTML='<p>Error encrypting file.  See console log.</p>';
+            return;
+        }
+
+        console.log('plaintext encrypted');
+        cipherbytes=new Uint8Array(cipherbytes);
+
+        var resultbytes=new Uint8Array(cipherbytes.length+16)
+        resultbytes.set(new TextEncoder("utf-8").encode('Salted__'));
+        resultbytes.set(pbkdf2salt, 8);
+        resultbytes.set(cipherbytes, 16);
+
+        return new Blob([resultbytes], {type: 'image/jpeg'});
+    }
+
+</script>

@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Map;
@@ -32,13 +36,28 @@ public class MainController {
     }
 
     @PostMapping("/")
-    public String uploadFile(Map<String, Object> model,
-                             @RequestParam("files") MultipartFile[] files) {
-        Arrays.stream(files).forEach(storageService::store);
-        model.put("files", getPathToDownloadUri());
+    public String uploadFile(
+//            @RequestParam("username") String username,
+            @RequestParam("files") MultipartFile files) throws IOException {
+//        System.out.println("bytes lenghts : "+ files.length);
+//
+//        FileOutputStream fos = new FileOutputStream("./uploads/Test.txt");
+//        fos.write(files);
+//        fos.close();
+//        System.out.println(username);
+        storageService.store(files);
 
         return "mainPage";
     }
+//
+//    @PostMapping("/")
+//    public String uploadFile(Map<String, Object> model,
+//                             @RequestParam("files") MultipartFile[] files) {
+//        Arrays.stream(files).forEach(storageService::store);
+//        model.put("files", getPathToDownloadUri());
+//
+//        return "mainPage";
+//    }
 
     private Map<Path, String> getPathToDownloadUri() {
         Stream<Path> filenamesInUploadDir = storageService.loadAllFilenamesInUploadDir();
