@@ -36,28 +36,13 @@ public class MainController {
     }
 
     @PostMapping("/")
-    public String uploadFile(
-//            @RequestParam("username") String username,
-            @RequestParam("files") MultipartFile files) throws IOException {
-//        System.out.println("bytes lenghts : "+ files.length);
-//
-//        FileOutputStream fos = new FileOutputStream("./uploads/Test.txt");
-//        fos.write(files);
-//        fos.close();
-//        System.out.println(username);
-        storageService.store(files);
+    public String uploadFile(Map<String, Object> model,
+                             @RequestParam("files") MultipartFile[] files) {
+        Arrays.stream(files).forEach(storageService::store);
+        model.put("files", getPathToDownloadUri());
 
         return "mainPage";
     }
-//
-//    @PostMapping("/")
-//    public String uploadFile(Map<String, Object> model,
-//                             @RequestParam("files") MultipartFile[] files) {
-//        Arrays.stream(files).forEach(storageService::store);
-//        model.put("files", getPathToDownloadUri());
-//
-//        return "mainPage";
-//    }
 
     private Map<Path, String> getPathToDownloadUri() {
         Stream<Path> filenamesInUploadDir = storageService.loadAllFilenamesInUploadDir();
