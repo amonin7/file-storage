@@ -17,6 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * This is an API controller, responsible for uploading and downloading files
+ */
 @RestController
 public class FileController {
 
