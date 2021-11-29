@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
-<!--<script src="http://code.jquery.com/jquery-plugins.js"></script>-->
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
 <h1>Simple server file storage</h1>
@@ -9,8 +8,8 @@
 <hr/>
 
 <h4>Upload files:</h4>
-<form id="uploadForm">
-    <input type="file" name="files"> <br/><br/>
+<form id="uploadForm" name="upForm" enctype="multipart/form-data" method="post">
+    <input type="file" id="fileInput" name="files"> <br/><br/>
     <button type="submit">Upload</button>
 </form>
 
