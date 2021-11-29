@@ -8,7 +8,7 @@
 <hr/>
 
 <h4>Upload files:</h4>
-<form id="uploadForm" name="upForm" enctype="multipart/form-data" method="post">
+<form id="uploadForm" name="upForm">
     <input type="file" id="fileInput" name="files"> <br/><br/>
     <button type="submit">Upload</button>
 </form>
@@ -18,14 +18,19 @@
         e.preventDefault();
         let oldFormData = new FormData(uploadForm);
         let file = oldFormData.get("files");
+        if (document.getElementById("fileInput").files.length === 0) {
+            console.log("No file is selected");
+            return;
+        }
         let encryptedFile = await encryptFile(file);
         let encFilename = file.name + '.enc';
         oldFormData.set("files", encryptedFile, encFilename);
-        await fetch('/', {
+        await fetch('/upload', {
             method: 'POST',
             body: oldFormData
         });
         uploadForm.reset();
+        uploadForm.after('File is successfully encrypted and uploaded. Refresh page to see the new list of files');
         return true;
     };
 </script>
