@@ -40,6 +40,13 @@ public class FileController {
                 .body(resource);
     }
 
+    @PostMapping("/delete")
+    public ResponseEntity<String> deleteAllFiles() {
+        storageService.deleteAll();
+        return ResponseEntity.ok()
+                .body("Deleted all files from FS");
+    }
+
     @PostMapping("/upload")
     public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
         return Arrays.stream(files)

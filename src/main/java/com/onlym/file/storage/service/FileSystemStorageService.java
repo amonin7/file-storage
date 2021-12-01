@@ -68,6 +68,7 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public Stream<Path> loadAllFilenamesInUploadDir() {
+        init();
         try {
             return Files.walk(this.uploadLocation, 1)
                     .filter(path -> !path.equals(this.uploadLocation))
