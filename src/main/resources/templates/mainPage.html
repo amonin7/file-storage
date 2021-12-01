@@ -13,7 +13,26 @@
     <button type="submit">Upload</button>
 </form>
 
-<script>
+<hr/>
+
+<h2>Files in storage:</h2>
+<ul>
+    <li th:each="file : ${files}">
+        <a th:href="${file.value}" target="_blank" th:text="${file.key}"></a>
+    </li>
+</ul>
+
+<hr/>
+
+<form id="deleteForm" name="delForm" action="/" method="get">
+    <button type="submit">Delete all files in File Storage</button>
+</form>
+
+</body>
+</html>
+
+<script type="text/javascript">
+
     uploadForm.onsubmit = async (e) => {
         e.preventDefault();
         let oldFormData = new FormData(uploadForm);
@@ -33,24 +52,7 @@
         uploadForm.after('File is successfully encrypted and uploaded. Refresh page to see the new list of files');
         return true;
     };
-</script>
 
-<hr/>
-
-<h2>Files in storage:</h2>
-<ul>
-    <li th:each="file : ${files}">
-        <a th:href="${file.value}" target="_blank" th:text="${file.key}"></a>
-    </li>
-</ul>
-
-<hr/>
-<!--TODO: Add delete button-->
-
-</body>
-</html>
-
-<script type="text/javascript">
     var objFile=null;
     let passphrase = "SOME_CUSTOM_PASSPHRASE"
 
@@ -122,5 +124,11 @@
 
         return new Blob([resultbytes], {type: 'image/jpeg'});
     }
+
+    deleteForm.onsubmit = async (e) => {
+        await fetch('/delete', {
+            method: 'POST'
+        });
+    };
 
 </script>
