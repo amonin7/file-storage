@@ -23,8 +23,14 @@
     </li>
 </ul>
 
-<table>
-
+<table >
+    <th:block th:each="file : ${files}">
+        <tr>
+            <td th:text="${file.key}"></td>
+            <td><a hidden="hidden" th:text="${file.key}" id="fileUrl"></a></td>
+            <td><button onclick="download()" th:name="${file.key}" id="downloadButton">Download</button></td>
+        </tr>
+    </th:block>
 </table>
 
 <hr/>
@@ -144,5 +150,9 @@
             method: 'POST'
         });
     };
+
+    async function download() {
+        console.log("Downloaded");
+    }
 
 </script>
