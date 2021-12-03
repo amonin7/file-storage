@@ -27,8 +27,7 @@
     <th:block th:each="file : ${files}">
         <tr>
             <td th:text="${file.key}"></td>
-            <td><a hidden="hidden" th:text="${file.key}" id="fileUrl"></a></td>
-            <td><button onclick="download()" th:name="${file.key}" id="downloadButton">Download</button></td>
+            <td><button onclick="download(event)" th:name="${file.value}">Download</button></td>
         </tr>
     </th:block>
 </table>
@@ -151,8 +150,8 @@
         });
     };
 
-    async function download() {
-        console.log("Downloaded");
+    async function download(event) {
+        console.log(event.target.name);
     }
 
 </script>
