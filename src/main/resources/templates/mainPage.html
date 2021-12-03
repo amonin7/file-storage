@@ -8,9 +8,10 @@
 <hr/>
 
 <h4>Upload files:</h4>
-<form id="uploadForm" name="upForm">
+<form id="uploadForm" name="upForm" action="/" method="get">
     <input type="file" id="fileInput" name="files"> <br/><br/>
-    <button type="submit">Upload</button>
+    <button type="button" onclick="sendFile()">Upload</button>
+    <button type="submit" id="submitButton" hidden="hidden">Submit form</button>
 </form>
 
 <hr/>
@@ -25,7 +26,7 @@
 <hr/>
 
 <form id="deleteForm" name="delForm" action="/" method="get">
-    <button type="submit">Delete all files.</button>
+    <button type="submit">Delete all files</button>
 </form>
 
 </body>
@@ -33,25 +34,32 @@
 
 <script type="text/javascript">
 
-    uploadForm.onsubmit = async (e) => {
-        e.preventDefault();
-        let oldFormData = new FormData(uploadForm);
-        let file = oldFormData.get("files");
+    async function sendFile() {
+        let file = fileInput.files[0];
+        let oldFormData = new FormData();
+        console.log("Got the file");
         if (document.getElementById("fileInput").files.length === 0) {
             console.log("No file is selected");
             return;
         }
         let encryptedFile = await encryptFile(file);
+        console.log("Encrypted new file");
         let encFilename = file.name + '.enc';
-        oldFormData.set("files", encryptedFile, encFilename);
-        await fetch('/upload', {
+        oldFormData.append("files", encryptedFile, encFilename);
+        console.log("Set new file");
+        let response = await fetch('/upload', {
             method: 'POST',
             body: oldFormData
         });
-        uploadForm.reset();
-        uploadForm.after('File is successfully encrypted and uploaded. Refresh page to see the new list of files');
-        return true;
-    };
+        console.log("Got response");
+        let result = await response.json();
+        if (response.ok) {
+            console.log("File uploaded: " + result.name);
+        } else {
+            alert("The error occurred while sending file to server. Repeat Sending please");
+        }
+        uploadForm.submit();
+    }
 
     var objFile=null;
     // TODO: Add passphrase into form.

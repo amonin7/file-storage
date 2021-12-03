@@ -48,11 +48,16 @@ public class FileController {
     }
 
     @PostMapping("/upload")
-    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-        return Arrays.stream(files)
-                .map(this::uploadFile)
-                .collect(Collectors.toList());
+    public FileResponse uploadMultipleFiles(@RequestParam("files") MultipartFile files) {
+        return uploadFile(files);
     }
+
+//    @PostMapping("/upload")
+//    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
+//        return Arrays.stream(files)
+//                .map(this::uploadFile)
+//                .collect(Collectors.toList());
+//    }
 
     private FileResponse uploadFile(MultipartFile file) {
         String name = storageService.store(file);
