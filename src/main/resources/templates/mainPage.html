@@ -17,11 +17,6 @@
 <hr/>
 
 <h2>Files in storage:</h2>
-<ul>
-    <li th:each="file : ${files}">
-        <a th:href="${file.value}" target="_blank" th:text="${file.key}"></a>
-    </li>
-</ul>
 
 <table >
     <th:block th:each="file : ${files}">
