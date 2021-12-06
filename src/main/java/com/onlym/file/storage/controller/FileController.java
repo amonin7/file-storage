@@ -13,10 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 /**
  * This is an API controller, responsible for uploading and downloading files
  */
@@ -51,13 +47,6 @@ public class FileController {
     public FileResponse uploadMultipleFiles(@RequestParam("files") MultipartFile files) {
         return uploadFile(files);
     }
-
-//    @PostMapping("/upload")
-//    public List<FileResponse> uploadMultipleFiles(@RequestParam("files") MultipartFile[] files) {
-//        return Arrays.stream(files)
-//                .map(this::uploadFile)
-//                .collect(Collectors.toList());
-//    }
 
     private FileResponse uploadFile(MultipartFile file) {
         String name = storageService.store(file);
