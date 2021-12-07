@@ -21,7 +21,7 @@
     <th:block th:each="file : ${files}">
         <tr>
             <td th:text="${file.key}"></td>
-            <td><button onclick="download(event)" th:name="${file.value}">Download</button></td>
+            <td><button onclick="download(event)" th:name="${file.value}" th:value="${file.key}">Download</button></td>
         </tr>
     </th:block>
 </table>
@@ -148,8 +148,78 @@
         deleteForm.submit()
     }
 
+    async function decryptfile(decryptedFile, filename) {
+        var cipherbytes=await readFile(decryptedFile)
+            .catch(function(err){
+                console.error(err);
+            });
+        var cipherbytes=new Uint8Array(cipherbytes);
+
+        console.log("decrypted file");
+        var pbkdf2iterations=10000;
+        var passphrasebytes=new TextEncoder("utf-8").encode(passphrase);
+        // var passphrasebytes=new TextEncoder("utf-8").encode(txtDecpassphrase.value);
+        var pbkdf2salt=cipherbytes.slice(8,16);
+
+        var passphrasekey=await window.crypto.subtle.importKey('raw', passphrasebytes, {name: 'PBKDF2'}, false, ['deriveBits'])
+            .catch(function(err){
+                console.error(err);
+
+            });
+        console.log('passphrasekey imported');
+
+        var pbkdf2bytes=await window.crypto.subtle.deriveBits({"name": 'PBKDF2', "salt": pbkdf2salt, "iterations": pbkdf2iterations, "hash": 'SHA-256'}, passphrasekey, 384)
+            .catch(function(err){
+                console.error(err);
+            });
+        console.log('pbkdf2bytes derived');
+        pbkdf2bytes=new Uint8Array(pbkdf2bytes);
+
+        keybytes=pbkdf2bytes.slice(0,32);
+        ivbytes=pbkdf2bytes.slice(32);
+        cipherbytes=cipherbytes.slice(16);
+
+        var key=await window.crypto.subtle.importKey('raw', keybytes, {name: 'AES-CBC', length: 256}, false, ['decrypt'])
+            .catch(function(err){
+                console.error(err);
+            });
+        console.log('key imported');
+
+        var plaintextbytes=await window.crypto.subtle.decrypt({name: "AES-CBC", iv: ivbytes}, key, cipherbytes)
+            .catch(function(err){
+                console.error(err);
+            });
+
+        if(!plaintextbytes) {
+            console.log('Error decrypting file. Password may be incorrect');
+            return;
+        }
+        console.log('ciphertext decrypted');
+        plaintextbytes=new Uint8Array(plaintextbytes);
+
+        var blob = new Blob([plaintextbytes], {type: 'application/download'});
+        var downloadLink = document.createElement("a");
+        console.log('filename is ' + filename);
+        downloadLink.download = filename;
+        downloadLink.href = URL.createObjectURL(blob);
+        downloadLink.onclick = destroyClickedElement;
+        downloadLink.style.display = "none";
+        document.body.appendChild(downloadLink);
+        downloadLink.click();
+    }
+
     async function download(event) {
         console.log(event.target.name);
+        let filename = event.target.value
+        filename = filename.replace('.enc', '');
+        let response = await fetch(event.target.name);
+        console.log(response.status);
+        let blob = await response.blob();
+        await decryptfile(blob, filename);
+    }
+
+    function destroyClickedElement(event) {
+        document.body.removeChild(event.target);
     }
 
 </script>
