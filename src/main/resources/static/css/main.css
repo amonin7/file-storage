@@ -1,0 +1,38 @@
+body {
+    font-family: 'Helvetica', 'Arial', 'sans-serif';
+    color: black;
+    font-size: 11pt;
+}
+
+a, a:link, a:visited, a:active {
+    color: blue;
+    text-decoration: underline;
+}
+
+a:hover {
+    cursor:pointer;
+    color: red;
+}
+
+.divTable{
+    display: table;
+}
+
+.divTableRow {
+    display: table-row;
+}
+.divTableCell {
+    display: table-cell;
+    padding: 3px 3px;
+}
+.divTableBody {
+    display: table-row-group;
+}
+
+.greenspan {
+    color: green;
+}
+
+.redspan {
+    color: red;
+}
