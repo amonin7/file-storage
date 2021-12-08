@@ -9,7 +9,7 @@
 <hr/>
 
 <h3>Upload files:</h3>
-<div>Type password for the file (should contain min. 8 symbols)</div>
+<h5>Type password for the file (should contain min. 8 symbols)</h5>
 <div class="divTable">
     <div class="divTableBody">
         <div class="divTableRow">
@@ -28,22 +28,29 @@
 
 <hr/>
 
-<h2>Files in storage:</h2>
+<div th:if="${!files.isEmpty()}">
+    <h2>Files in storage:</h2>
 
-<table >
-    <th:block th:each="file : ${files}">
-        <tr>
-            <td th:text="${file.key}"></td>
-            <td><button onclick="download(event)" th:name="${file.value}" th:value="${file.key}">Download</button></td>
-        </tr>
-    </th:block>
-</table>
+    <h5>Type password for the file you want to download and click Download button next to it</h5>
+    <table >
+        <th:block th:each="file : ${files}">
+            <tr>
+                <td th:text="${file.key}"></td>
+                <td><input type="password" size="30" th:id="${file.key}"></td>
+                <td><button onclick="download(event)" th:name="${file.value}" th:value="${file.key}">Download</button></td>
+            </tr>
+        </th:block>
+    </table>
 
-<hr/>
+    <hr/>
 
-<form id="deleteForm" name="delForm" action="/" method="get">
-    <button type="button" onclick="deleteAll()">Delete all files</button>
-</form>
+    <form id="deleteForm" name="delForm" action="/" method="get">
+        <button type="button" onclick="deleteAll()">Delete all files</button>
+    </form>
+</div>
+<div th:if="${files.isEmpty()}">
+    <h3>No files put in storage yet</h3>
+</div>
 
 <script src="/js/main.js"></script>
 </body>

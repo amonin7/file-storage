@@ -1,4 +1,5 @@
 var objFile;
+let passphrase = "SOME_CUSTOM_PASSPHRASE"
 
 function selectFile(Files) {
     objFile=Files[0];
@@ -40,9 +41,6 @@ async function sendFile() {
     fileInput.disabled = true;
     uploadForm.submit();
 }
-
-// TODO: Add passphrase into form.
-let passphrase = "SOME_CUSTOM_PASSPHRASE"
 
 function readFile(file){
     return new Promise((resolve, reject) => {
@@ -86,8 +84,7 @@ async function encryptFile() {
     plainTextBytes=new Uint8Array(plainTextBytes);
 
     var pbkdf2iterations=10000;
-    var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
-    // var passphraseBytes=new TextEncoder("utf-8").encode(txtEncpassphrase.value);
+    var passphraseBytes=new TextEncoder("utf-8").encode(txtEncpassphrase.value);
     var pbkdf2salt=window.crypto.getRandomValues(new Uint8Array(8));
     const {keybytes, ivbytes} = await getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations);
 
@@ -135,11 +132,9 @@ async function decryptfile(decryptedFile, filename) {
             console.error(err);
         });
     cipherbytes=new Uint8Array(cipherbytes);
-
-    console.log("decrypted file");
     var pbkdf2iterations=10000;
     var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
-    // var passphrasebytes=new TextEncoder("utf-8").encode(txtDecpassphrase.value);
+    console.log(passphrase);
     var pbkdf2salt=cipherbytes.slice(8,16);
 
     const {keybytes, ivbytes} = await getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations);
@@ -156,8 +151,9 @@ async function decryptfile(decryptedFile, filename) {
             console.error(err);
         });
 
+    passphrase = "";
     if(!plaintextbytes) {
-        console.log('Error decrypting file. Password may be incorrect');
+        alert('Error occurred during file decryption. Try retype password for this file.');
         return;
     }
     console.log('ciphertext decrypted');
@@ -176,7 +172,9 @@ async function decryptfile(decryptedFile, filename) {
 
 async function download(event) {
     console.log(event.target.name);
-    let filename = event.target.value
+    let filename = event.target.value;
+    let inputField = document.getElementById(filename);
+    passphrase = inputField.value;
     filename = filename.replace('.enc', '');
     let response = await fetch(event.target.name);
     console.log(response.status);
