@@ -2,15 +2,66 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+<style>
+    body {
+        font-family: 'Helvetica', 'Arial', 'sans-serif';
+        color: black;
+        font-size: 11pt;
+    }
+
+    a, a:link, a:visited, a:active {
+        color: blue;
+        text-decoration: underline;
+    }
+
+    a:hover {
+        cursor:pointer;
+        color: red;
+    }
+
+    .divTable{
+        display: table;
+    }
+
+    .divTableRow {
+        display: table-row;
+    }
+    .divTableCell {
+        display: table-cell;
+        padding: 3px 3px;
+    }
+    .divTableBody {
+        display: table-row-group;
+    }
+
+    .greenspan {
+        color: green;
+    }
+
+    .redspan {
+        color: red;
+    }
+</style>
 
 <h1>Simple server file storage</h1>
 
 <hr/>
 
 <h4>Upload files:</h4>
+<div class="divTable">
+    <div class="divTableBody">
+        <div class="divTableRow">
+            <div class="divTableCell">Password</div>
+            <div class="divTableCell">
+                <input id=txtEncpassphrase type=password size=30 onkeyup=encvalidate(); value=''>
+            </div>
+            <div class="divTableCell"><span class=greenspan id=spnCheckretype></span></div>
+        </div>
+    </div>
+</div>
 <form id="uploadForm" name="upForm" action="/" method="get">
-    <input type="file" id="fileInput" name="files"> <br/><br/>
-    <button type="button" onclick="sendFile()">Upload</button>
+    <input type="file" id="fileInput" name="files" onchange="selectFile(this.files)"> <br/><br/>
+    <button type="button" id="uploadButton" onclick="sendFile()">Upload</button>
 </form>
 
 <hr/>
@@ -37,17 +88,32 @@
 
 <script type="text/javascript">
 
-    async function sendFile() {
-        let file = fileInput.files[0];
-        let oldFormData = new FormData();
-        console.log("Got the file");
-        if (document.getElementById("fileInput").files.length === 0) {
-            console.log("No file is selected");
-            return;
+    var objFile;
+
+    function selectFile(Files) {
+        objFile=Files[0];
+        uploadButton.disabled = !(txtEncpassphrase.value.length >= 8 && objFile);
+    }
+
+    function encvalidate() {
+        if(txtEncpassphrase.value.length>=8) {
+            spnCheckretype.classList.add("greenspan");
+            spnCheckretype.classList.remove("redspan");
+            spnCheckretype.innerHTML='&#10004;';
+        } else {
+            spnCheckretype.classList.remove("greenspan");
+            spnCheckretype.classList.add("redspan");
+            spnCheckretype.innerHTML='&#10006;';
         }
-        let encryptedFile = await encryptFile(file);
+
+        uploadButton.disabled = !(txtEncpassphrase.value.length >= 8 && objFile);
+    }
+
+    async function sendFile() {
+        let oldFormData = new FormData();
+        let encryptedFile = await encryptFile();
         console.log("Encrypted new file");
-        let encFilename = file.name + '.enc';
+        let encFilename = objFile.name + '.enc';
         oldFormData.append("files", encryptedFile, encFilename);
         console.log("Set new file");
         let response = await fetch('/upload', {
@@ -65,7 +131,6 @@
         uploadForm.submit();
     }
 
-    var objFile=null;
     // TODO: Add passphrase into form.
     let passphrase = "SOME_CUSTOM_PASSPHRASE"
 
@@ -79,10 +144,7 @@
         });
     }
 
-    async function encryptFile(Files) {
-        objFile=Files;
-        // objFile=Files[0];
-
+    async function encryptFile() {
         var plainTextBytes=await readFile(objFile)
             .catch(function(err){
                 console.error(err);
@@ -92,6 +154,7 @@
         var pbkdf2iterations=10000;
         var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
         // var passphraseBytes=new TextEncoder("utf-8").encode(txtEncpassphrase.value);
+        console.log("Passphrase is: " + txtEncpassphrase.value);
         var pbkdf2salt=window.crypto.getRandomValues(new Uint8Array(8));
 
         var passphrasekey=await window.crypto.subtle.importKey('raw', passphraseBytes, {name: 'PBKDF2'}, false, ['deriveBits'])
@@ -153,7 +216,7 @@
             .catch(function(err){
                 console.error(err);
             });
-        var cipherbytes=new Uint8Array(cipherbytes);
+        cipherbytes=new Uint8Array(cipherbytes);
 
         console.log("decrypted file");
         var pbkdf2iterations=10000;
