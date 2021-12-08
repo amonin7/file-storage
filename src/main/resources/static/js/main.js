@@ -54,6 +54,30 @@ function readFile(file){
     });
 }
 
+async function getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations) {
+    var passphrasekey = await window.crypto.subtle.importKey('raw', passphraseBytes, {name: 'PBKDF2'}, false, ['deriveBits'])
+        .catch(function (err) {
+            console.error(err);
+        });
+    console.log('passphrasekey imported');
+
+    var pbkdf2bytes = await window.crypto.subtle.deriveBits({
+        "name": 'PBKDF2',
+        "salt": pbkdf2salt,
+        "iterations": pbkdf2iterations,
+        "hash": 'SHA-256'
+    }, passphrasekey, 384)
+        .catch(function (err) {
+            console.error(err);
+        });
+    console.log('pbkdf2bytes derived');
+    pbkdf2bytes = new Uint8Array(pbkdf2bytes);
+
+    keybytes = pbkdf2bytes.slice(0, 32);
+    ivbytes = pbkdf2bytes.slice(32);
+    return {keybytes, ivbytes};
+}
+
 async function encryptFile() {
     var plainTextBytes=await readFile(objFile)
         .catch(function(err){
@@ -64,24 +88,8 @@ async function encryptFile() {
     var pbkdf2iterations=10000;
     var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
     // var passphraseBytes=new TextEncoder("utf-8").encode(txtEncpassphrase.value);
-    console.log("Passphrase is: " + txtEncpassphrase.value);
     var pbkdf2salt=window.crypto.getRandomValues(new Uint8Array(8));
-
-    var passphrasekey=await window.crypto.subtle.importKey('raw', passphraseBytes, {name: 'PBKDF2'}, false, ['deriveBits'])
-        .catch(function(err){
-            console.error(err);
-        });
-    console.log('passphrasekey imported');
-
-    var pbkdf2bytes=await window.crypto.subtle.deriveBits({"name": 'PBKDF2', "salt": pbkdf2salt, "iterations": pbkdf2iterations, "hash": 'SHA-256'}, passphrasekey, 384)
-        .catch(function(err){
-            console.error(err);
-        });
-    console.log('pbkdf2bytes derived');
-    pbkdf2bytes=new Uint8Array(pbkdf2bytes);
-
-    keybytes=pbkdf2bytes.slice(0,32);
-    ivbytes=pbkdf2bytes.slice(32);
+    const {keybytes, ivbytes} = await getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations);
 
     var key=await window.crypto.subtle.importKey('raw', keybytes, {name: 'AES-CBC', length: 256}, false, ['encrypt'])
         .catch(function(err){
@@ -130,26 +138,11 @@ async function decryptfile(decryptedFile, filename) {
 
     console.log("decrypted file");
     var pbkdf2iterations=10000;
-    var passphrasebytes=new TextEncoder("utf-8").encode(passphrase);
+    var passphraseBytes=new TextEncoder("utf-8").encode(passphrase);
     // var passphrasebytes=new TextEncoder("utf-8").encode(txtDecpassphrase.value);
     var pbkdf2salt=cipherbytes.slice(8,16);
 
-    var passphrasekey=await window.crypto.subtle.importKey('raw', passphrasebytes, {name: 'PBKDF2'}, false, ['deriveBits'])
-        .catch(function(err){
-            console.error(err);
-
-        });
-    console.log('passphrasekey imported');
-
-    var pbkdf2bytes=await window.crypto.subtle.deriveBits({"name": 'PBKDF2', "salt": pbkdf2salt, "iterations": pbkdf2iterations, "hash": 'SHA-256'}, passphrasekey, 384)
-        .catch(function(err){
-            console.error(err);
-        });
-    console.log('pbkdf2bytes derived');
-    pbkdf2bytes=new Uint8Array(pbkdf2bytes);
-
-    keybytes=pbkdf2bytes.slice(0,32);
-    ivbytes=pbkdf2bytes.slice(32);
+    const {keybytes, ivbytes} = await getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations);
     cipherbytes=cipherbytes.slice(16);
 
     var key=await window.crypto.subtle.importKey('raw', keybytes, {name: 'AES-CBC', length: 256}, false, ['decrypt'])
