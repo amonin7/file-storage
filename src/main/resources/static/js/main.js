@@ -71,8 +71,8 @@ async function getKeyAndIvBytes(passphraseBytes, pbkdf2salt, pbkdf2iterations) {
     console.log('pbkdf2bytes derived');
     pbkdf2bytes = new Uint8Array(pbkdf2bytes);
 
-    keybytes = pbkdf2bytes.slice(0, 32);
-    ivbytes = pbkdf2bytes.slice(32);
+    let keybytes = pbkdf2bytes.slice(0, 32);
+    let ivbytes = pbkdf2bytes.slice(32);
     return {keybytes, ivbytes};
 }
 
