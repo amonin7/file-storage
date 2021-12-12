@@ -1,6 +1,8 @@
 # File storage
 
-An implementation of simple client-server application for uploading/downloading files. 
+#### An implementation of simple client-server application for uploading/downloading files. ###
+
+---
 
 ## Overview
 
@@ -9,6 +11,11 @@ This application consists of two parts:
   **Note: Clients encrypt a file before uploading it to the server. Once downloaded from the
   server, the client decrypts the file.**
 - A server, which receives files from clients, and serves the files back to them upon request.
+
+## Demo
+![alt text](http://url/to/img.png)
+![alt text](http://url/to/img.png)
+![alt text](http://url/to/img.png)
 
 ## Prerequisites
 
@@ -39,3 +46,5 @@ gralde clean build bootRun
 **3. Use the app**
 
 The application can be accessed at http://localhost:8080/
+
+## 
