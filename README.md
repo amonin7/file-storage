@@ -13,11 +13,12 @@ This application consists of two parts:
 - A server, which receives files from clients, and serves the files back to them upon request.
 
 ## Demo
+
 ![alt text](https://github.com/amonin7/file-storage/blob/main/demo/uploadFile.png)
 ![alt text](https://github.com/amonin7/file-storage/blob/main/demo/watchFiles.png)
 ![alt text](https://github.com/amonin7/file-storage/blob/main/demo/downoadFile.png)
 
-## Prerequisites
+## Technologies
 
 - Java 11
 - [Spring Boot 2.6.0](https://projects.spring.io/spring-boot)
