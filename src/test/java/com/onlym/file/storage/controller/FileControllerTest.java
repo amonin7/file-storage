@@ -13,7 +13,6 @@ class FileControllerTest {
 
     private StorageService storageService;
 
-    @Autowired
     private StorageProperties storageProperties;
 
     @BeforeEach
