@@ -1,20 +1,24 @@
 package com.onlym.file.storage.controller;
 
+import com.onlym.file.storage.properties.StorageProperties;
+import com.onlym.file.storage.service.FileSystemStorageService;
 import com.onlym.file.storage.service.StorageService;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 class FileControllerTest {
 
-    private final StorageService storageService;
+    private StorageService storageService;
 
-    FileControllerTest(StorageService storageService) {
-        this.storageService = storageService;
-    }
+    @Autowired
+    private StorageProperties storageProperties;
 
     @BeforeEach
-    void setUp() {
+    void beforeAll() {
+        this.storageService = new FileSystemStorageService(storageProperties);
     }
 
     @Test
@@ -27,5 +31,10 @@ class FileControllerTest {
 
     @Test
     void uploadMultipleFiles() {
+    }
+
+    @AfterAll
+    static void afterAll() {
+
     }
 }
