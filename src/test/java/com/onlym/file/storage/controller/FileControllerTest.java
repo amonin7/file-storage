@@ -18,6 +18,7 @@ class FileControllerTest {
     @BeforeEach
     void beforeAll() {
         this.storageService = new FileSystemStorageService(storageProperties);
+        // create the test directory
     }
 
     @Test
@@ -34,6 +35,6 @@ class FileControllerTest {
 
     @AfterAll
     static void afterAll() {
-
+        // delete the test directory
     }
 }
