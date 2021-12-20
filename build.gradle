@@ -4,7 +4,7 @@ plugins {
 	id 'java'
 }
 
-group = 'io.blindet'
+group = 'com.onlym'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '11'
 
@@ -16,6 +16,7 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'junit:junit'
 }
 
 test {
