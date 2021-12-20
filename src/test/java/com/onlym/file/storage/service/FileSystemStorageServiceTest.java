@@ -1,11 +1,12 @@
 package com.onlym.file.storage.service;
 
 import com.onlym.file.storage.properties.StorageProperties;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -21,6 +22,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -39,18 +41,15 @@ class FileSystemStorageServiceTest {
 
     @Test
     void store() throws IOException {
-        storeTestFile();
         String pathString = getPathString();
         File f = new File(pathString);
         assertTrue(f.exists());
         String actualFileContent = Files.readString(Path.of(pathString));
         assertEquals(FILE_CONTENT, actualFileContent);
-        deleteDir();
     }
 
     @Test
     void loadAllFilenamesInUploadDir() {
-        storeTestFile();
         Stream<Path> pathsStream = storageService.loadAllFilenamesInUploadDir();
         AtomicInteger filesCounter = new AtomicInteger();
         pathsStream.forEach(path -> {
@@ -58,7 +57,6 @@ class FileSystemStorageServiceTest {
             assertEquals(Path.of(FILENAME), path);
         });
         assertEquals(1, filesCounter.get());
-        deleteDir();
     }
 
     @Test
@@ -69,17 +67,19 @@ class FileSystemStorageServiceTest {
 
     @Test
     void loadFileByFilename() throws MalformedURLException {
-        storeTestFile();
         UrlResource expectedFile = new UrlResource(Path.of(getPathString()).toUri());
         assertEquals(expectedFile, storageService.loadFileByFilename(FILENAME));
-        deleteDir();
     }
 
-    @Test
+//    @Test
     void deleteAll() {
+        storageService.deleteAll();
+        File testUploadDir = new File(properties.getLocation());
+        assertFalse(testUploadDir.exists());
     }
 
-    private void storeTestFile() {
+    @BeforeEach
+    void storeTestFile() {
         byte[] content = FILE_CONTENT.getBytes(StandardCharsets.UTF_8);
         MultipartFile result = new MockMultipartFile(FILENAME, FILENAME, CONTENT_TYPE, content);
         storageService.store(result);
@@ -89,14 +89,11 @@ class FileSystemStorageServiceTest {
         return properties.getLocation() + "/" + FILENAME;
     }
 
-    private void deleteDir() {
-        File file = new File(properties.getLocation());
-        File[] contents = file.listFiles();
-        if (contents != null) {
-            for (File f : contents) {
-                assertTrue(f.delete());
-            }
+    @AfterEach
+    void deleteDir() {
+        File file = new File(getPathString());
+        if (file.exists() && file.isFile()) {
+            assertTrue(file.delete());
         }
-        assertTrue(file.delete());
     }
 }
