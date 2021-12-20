@@ -42,10 +42,20 @@ class FileSystemStorageServiceTest {
         assertTrue(f.exists());
         String actualFileContent = Files.readString(Path.of(pathString));
         assertEquals(FILE_CONTENT, actualFileContent);
+        deleteDir();
     }
 
     @Test
     void loadAllFilenamesInUploadDir() {
+        storeTestFile();
+        Stream<Path> pathsStream = storageService.loadAllFilenamesInUploadDir();
+        AtomicInteger filesCounter = new AtomicInteger();
+        pathsStream.forEach(path -> {
+            filesCounter.incrementAndGet();
+            assertEquals(Path.of(FILENAME), path);
+        });
+        assertEquals(1, filesCounter.get());
+        deleteDir();
     }
 
     @Test
@@ -68,5 +78,16 @@ class FileSystemStorageServiceTest {
 
     private String getPathString() {
         return properties.getLocation() + "/" + FILENAME;
+    }
+
+    private void deleteDir() {
+        File file = new File(properties.getLocation());
+        File[] contents = file.listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                assertTrue(f.delete());
+            }
+        }
+        assertTrue(file.delete());
     }
 }
