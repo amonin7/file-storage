@@ -5,12 +5,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -60,10 +63,16 @@ class FileSystemStorageServiceTest {
 
     @Test
     void loadPathByFilename() {
+        Path pathByFilename = storageService.loadPathByFilename(FILENAME);
+        assertEquals(Path.of(getPathString()), pathByFilename);
     }
 
     @Test
-    void loadFileByFilename() {
+    void loadFileByFilename() throws MalformedURLException {
+        storeTestFile();
+        UrlResource expectedFile = new UrlResource(Path.of(getPathString()).toUri());
+        assertEquals(expectedFile, storageService.loadFileByFilename(FILENAME));
+        deleteDir();
     }
 
     @Test
