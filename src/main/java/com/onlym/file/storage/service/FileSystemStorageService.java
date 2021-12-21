@@ -10,6 +10,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.PostConstruct;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -103,6 +104,11 @@ public class FileSystemStorageService implements StorageService {
 
     @Override
     public void deleteAll() {
-        FileSystemUtils.deleteRecursively(uploadLocation.toFile());
+        File[] contents = uploadLocation.toFile().listFiles();
+        if (contents != null) {
+            for (File f : contents) {
+                f.delete();
+            }
+        }
     }
 }

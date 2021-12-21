@@ -22,7 +22,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @RunWith(SpringRunner.class)
@@ -71,11 +70,13 @@ class FileSystemStorageServiceTest {
         assertEquals(expectedFile, storageService.loadFileByFilename(FILENAME));
     }
 
-//    @Test
+    @Test
     void deleteAll() {
         storageService.deleteAll();
         File testUploadDir = new File(properties.getLocation());
-        assertFalse(testUploadDir.exists());
+        assertTrue(testUploadDir.exists());
+        assertTrue(testUploadDir.isDirectory());
+        assertEquals(0, testUploadDir.list().length);
     }
 
     @BeforeEach
