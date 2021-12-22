@@ -11,13 +11,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 class FileControllerTest {
 
-    private StorageService storageService;
-
-    private StorageProperties storageProperties;
-
     @BeforeEach
     void beforeAll() {
-        this.storageService = new FileSystemStorageService(storageProperties);
         // create the test directory
     }
 
