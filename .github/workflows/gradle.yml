@@ -10,5 +10,6 @@ jobs:
         with:
           java-version: 11
           distribution: 'adopt'
+          cache: gradle
       - name: Build with gradle
         run: ./gradlew clean build
