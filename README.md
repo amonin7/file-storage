@@ -1,3 +1,5 @@
+[![CI](https://github.com/amonin7/file-storage/actions/workflows/gradle.yml/badge.svg)](https://github.com/amonin7/file-storage/actions/workflows/gradle.yml)
+
 # File storage
 
 #### An implementation of simple client-server application for uploading/downloading files. ###
