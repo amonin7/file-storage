@@ -32,10 +32,9 @@ public class FileSystemStorageService implements StorageService {
     @Override
     @PostConstruct
     public void init() {
-        try {
-            Files.createDirectories(uploadLocation);
-        } catch (IOException e) {
-            throw new StorageException("Could not initialize storage location", e);
+        File uploadDir = new File(uploadLocation.toString());
+        if (!uploadDir.exists()) {
+            uploadDir.mkdir();
         }
     }
 

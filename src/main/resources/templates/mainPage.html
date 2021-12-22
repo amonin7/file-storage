@@ -1,8 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <body>
 <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
-<link href="/css/main.css" rel="stylesheet">
+<link href="/css/main.css" rel="stylesheet"/>
 
 <h1>Simple server file storage</h1>
 
@@ -15,15 +15,15 @@
         <div class="divTableRow">
             <div class="divTableCell">Password</div>
             <div class="divTableCell">
-                <input id=txtEncpassphrase type=password size=30 onkeyup=encvalidate(); value=''>
+                <input id="txtEncpassphrase" type="password" size="30" onkeyup="encvalidate();" value=''/>
             </div>
-            <div class="divTableCell"><span class=greenspan id=spnCheckretype></span></div>
+            <div class="divTableCell"><span class="greenspan" id="spnCheckretype"></span></div>
         </div>
     </div>
 </div>
 <form id="uploadForm" name="upForm" action="/" method="get">
-    <input type="file" id="fileInput" name="files" onchange="selectFile(this.files)"> <br/><br/>
-    <button type="button" id="uploadButton" onclick="sendFile()" disabled>Upload</button>
+    <input type="file" id="fileInput" name="files" onchange="selectFile(this.files)"/> <br/><br/>
+    <button type="button" id="uploadButton" onclick="sendFile()" disabled="disabled">Upload</button>
 </form>
 
 <hr/>
@@ -32,11 +32,11 @@
     <h2>Files in storage:</h2>
 
     <h5>Type password for the file you want to download and click Download button next to it</h5>
-    <table >
+    <table id="files-table">
         <th:block th:each="file : ${files}">
             <tr>
                 <td th:text="${file.key}"></td>
-                <td><input type="password" size="30" th:id="${file.key}"></td>
+                <td><input type="password" size="30" th:id="${file.key}"/></td>
                 <td><button onclick="download(event)" th:name="${file.value}" th:value="${file.key}">Download</button></td>
             </tr>
         </th:block>
